@@ -140,7 +140,6 @@ export class GastosComponent implements OnInit {
             totalPorcentaje += porcentaje;
           }
         }
-
       });
     });
 
