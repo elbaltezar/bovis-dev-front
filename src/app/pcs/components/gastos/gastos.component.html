@@ -55,7 +55,7 @@
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro)"
+                                                        (click)="modificarRubro(rubro.value, i, iRubro, true)"
                                                         [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
@@ -90,7 +90,7 @@
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro)"
+                                                        (click)="modificarRubro(rubro.value, i, iRubro, true)"
                                                         [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
@@ -182,7 +182,7 @@
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro)"
+                                                        (click)="modificarRubro(rubro.value, i, iRubro, false)"
                                                         [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
@@ -217,7 +217,7 @@
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro)"
+                                                        (click)="modificarRubro(rubro.value, i, iRubro, false)"
                                                         [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>

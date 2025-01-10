@@ -39,8 +39,6 @@ export class ModificarRubroComponent implements OnInit {
   mes_ini: number
   ano_ini: number
 
-
-
   form = this.fb.group({
     idRubro: [null],
     unidad: ['', Validators.required],
@@ -58,7 +56,6 @@ export class ModificarRubroComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
     this.unidades = [
       { name: '%' },
       { name: 'mes' },
@@ -67,6 +64,7 @@ export class ModificarRubroComponent implements OnInit {
     ];
 
     const rubro = this.config.data.rubro as Rubro
+    console.log(rubro);
 
     const numProyectos = this.config.data.numProyecto
 
@@ -80,33 +78,24 @@ export class ModificarRubroComponent implements OnInit {
         aplicaTodosMeses: rubro.aplicaTodosMeses || false,
         numProyecto: numProyectos
       })
-
-
-
     }
-
 
     this.selectedUnidad = rubro.unidad?.toString()
 
     const fechaInicio = new Date(this.config.data.fechaInicio)
     const fechaFin = new Date(this.config.data.fechaFin)
-
-    //console.log("this.config.data.fechaInicio:" + this.config.data.fechaInicio)
-    console.log(fechaInicio.getMonth() + 1)
-
+    // console.log("this.config.data.fechaInicio:" + this.config.data.fechaInicio)
+    // console.log(fechaInicio.getMonth() + 1)
     var splitted = fechaInicio.toString().split(" ", 4);
     //console.log(splitted)
     this.mes_ini = Number(fechaInicio.getMonth() + 1)
     this.ano_ini = Number(fechaInicio.getFullYear())
-
     //console.log("this.mes_ini: " + this.mes_ini)
     //console.log("this.ano_ini : " + this.ano_ini)
-
     let meses = await obtenerMeses(fechaInicio, fechaFin);
 
     meses.forEach(mesRegistro => {
       const date = new Date("01-" + mesRegistro.mes + "-" + mesRegistro.anio)
-
       //console.log("FORMULA MES : " + this.mes_ini +" - "+ fechaRegistro.mes)
       //console.log("OPERACIONES MES : " + (fechaRegistro.mes - this.mes_ini))
       //console.log("FORMULA ANIO : " +  fechaRegistro.anio +" - "+ this.ano_ini +" * 12 ")
@@ -114,11 +103,9 @@ export class ModificarRubroComponent implements OnInit {
       //console.log("GRAN TOTAL : " + +(fechaRegistro.mes - this.mes_ini) + +(( fechaRegistro.anio -this.ano_ini) * 12 ))
 
       let MES = (mesRegistro.mes - this.mes_ini)
-
       let ANIO = ((mesRegistro.anio - this.ano_ini) * 12)
-
       let OPERACION = MES + ANIO
-      console.log("GRAN TOTAL : " + OPERACION)
+      // console.log("GRAN TOTAL : " + OPERACION)
 
       this.fechas.push(this.fb.group({
         mes: [mesRegistro.mes],
@@ -126,9 +113,9 @@ export class ModificarRubroComponent implements OnInit {
         desc: [mesRegistro.desc],
         porcentaje: [this.form.value.idRubro ? this.obtenerPorcentaje(rubro.fechas, mesRegistro) : 0],
         mesTranscurrido: OPERACION
-
       }))
     })
+
 
     if (rubro.aplicaTodosMeses) {
       this.cambiarValoresFechas()
@@ -136,7 +123,6 @@ export class ModificarRubroComponent implements OnInit {
   }
 
   guardar() {
-
     this.sharedService.cambiarEstado(true)
 
     this.pcsService.actualizarRubro(this.form.value)

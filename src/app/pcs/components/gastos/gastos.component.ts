@@ -205,31 +205,21 @@ export class GastosComponent implements OnInit {
                                 .pipe(finalize(() => this.sharedService.cambiarEstado(false)))
                                 .subscribe({
                                   next: ({data,message}) => {
-
                                     const [costoR] = data
-
-
                                     if(message != null  ){
-
                                       this.mensajito = message;
-
                                       if(this.mensajito.includes('No se encontraron registros de costos para el empleado') ){
-
                                      // console.log('message ' + message)
                                      // console.log('es 0 ' + 0)
 
                                       this.costoMensualEmpleado =  0
-
-
                                           // Agreamos las fechas por rubro
                                           rubro.fechas.forEach(fecha => {
                                           rubro.fechas.forEach(fecha => {
                                             this.sumacolumna += +fecha.porcentaje
                                           })
                                           this.mesesProyecto        = obtenerMeses(this.proyectoFechaInicio, this.proyectoFechaFin)
-
                                          //console.log('const total1 ------< ' + total)
-
 
                                           this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
                                             id:         fecha.id,
@@ -239,23 +229,14 @@ export class GastosComponent implements OnInit {
                                             //porcentaje: fecha.porcentaje
                                           }))
                                         })
-
-
                                     }else{
-
                                       this.costoMensualEmpleado =  data.map(empleado => costoR.costoMensualEmpleado )[0]
-
-
-
                                         seccion.sumaFechas.forEach((sumaFecha) => {this.sumafechas(seccionIndex).push(this.fb.group({
                                             mes:        sumaFecha.mes,
                                             anio:       sumaFecha.anio,
                                             sumaFecha:  sumaFecha.sumaPorcentaje
                                           }))
                                         })
-
-
-
                                           rubro.fechas.forEach(fecha => {
                                             this.sumacolumna += +fecha.porcentaje
                                           })
@@ -270,14 +251,8 @@ export class GastosComponent implements OnInit {
                                             //porcentaje: fecha.porcentaje
                                           }))
                                         })
-
-
-
                                     }
-                                   }
-
-
-
+                                    }
                                   },
                                   error: (err) => {
                                     //console.log("error cuando no Existe registro de costos --------------> " +err.error.text);
@@ -290,17 +265,17 @@ export class GastosComponent implements OnInit {
                                 })*/
 
               } else {
-                seccion.sumaFechas.forEach((sumaFecha) => {
-                  this.sumafechas(seccionIndex).push(this.fb.group({
-                    mes: sumaFecha.mes,
-                    anio: sumaFecha.anio,
-                    sumaFecha: sumaFecha.sumaPorcentaje
-                  }));
-                });
+                // seccion.sumaFechas.forEach((sumaFecha) => {
+                //   this.sumafechas(seccionIndex).push(this.fb.group({
+                //     mes: sumaFecha.mes,
+                //     anio: sumaFecha.anio,
+                //     sumaFecha: sumaFecha.sumaPorcentaje
+                //   }));
+                // });
 
-                rubro.fechas.forEach(fecha => {
-                  this.sumacolumna += +fecha.porcentaje
-                });
+                // rubro.fechas.forEach(fecha => {
+                //   this.sumacolumna += +fecha.porcentaje
+                // });
 
                 // Agreamos las fechas por rubro
                 this.mesesProyecto.forEach(mes => {
@@ -309,8 +284,8 @@ export class GastosComponent implements OnInit {
                   );
 
                   if (mesRegistro) {
-                    //console.log(mesRegistro, this.mesesProyecto, mes);
-                    // console.log('Agregando registro:', mesRegistro);
+                    // console.log(mesRegistro, this.mesesProyecto, mes);
+                    // console.log('Agregando registro:', mesRegistro, 'con porcentaje:', mesRegistro.porcentaje);
                     this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
                       id: mesRegistro.id,
                       mes: mesRegistro.mes,
@@ -319,6 +294,7 @@ export class GastosComponent implements OnInit {
                     }));
                   }
                   else {
+                    // console.log('Agregando registro:', mes, 'con porcentaje:', 0);
                     this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
                       id: 0,
                       mes: mes.mes,
@@ -366,7 +342,9 @@ export class GastosComponent implements OnInit {
 
 
 
-  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number) {
+  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number, reembolsable: boolean) {
+    rubro.reembolsable = reembolsable;
+
     this.dialogService.open(ModificarRubroComponent, {
       header: rubro.rubro,
       width: '50%',
@@ -375,34 +353,35 @@ export class GastosComponent implements OnInit {
         rubro,
         fechaInicio: this.proyectoFechaInicio,
         fechaFin: this.proyectoFechaFin,
-        numProyecto: this.numProyectorubro
+        numProyecto: this.numProyectorubro,
+      }
+    }).onClose.subscribe((result) => {
+      if (result && result.rubro) {
+        const rubroRespuesta = result.rubro as Rubro;
+
+        this.rubros(seccionIndex).at(rubroIndex).patchValue({
+          unidad: rubroRespuesta.unidad,
+          cantidad: rubroRespuesta.cantidad,
+          reembolsable: reembolsable, //rubroRespuesta.reembolsable,
+          aplicaTodosMeses: rubroRespuesta.aplicaTodosMeses,
+        });
+
+        this.fechas(seccionIndex, rubroIndex).clear();
+
+        const fechasFiltradas = rubroRespuesta.fechas.filter(fechaRegistro => {
+          return reembolsable ? rubro.reembolsable : !rubro.reembolsable;
+        });
+
+        fechasFiltradas.forEach(fechaRegistro => {
+          this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
+            id: fechaRegistro.id,
+            mes: fechaRegistro.mes,
+            anio: fechaRegistro.anio,
+            porcentaje: fechaRegistro.porcentaje,
+          }));
+        });
       }
     })
-      .onClose.subscribe((result) => {
-
-        if (result && result.rubro) {
-
-          const rubroRespuesta = result.rubro as Rubro
-
-          this.rubros(seccionIndex).at(rubroIndex).patchValue({
-            unidad: rubroRespuesta.unidad,
-            cantidad: rubroRespuesta.cantidad,
-            reembolsable: rubroRespuesta.reembolsable,
-            aplicaTodosMeses: rubroRespuesta.aplicaTodosMeses
-          })
-
-          this.fechas(seccionIndex, rubroIndex).clear()
-
-          rubroRespuesta.fechas.forEach(fechaRegistro => {
-            this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
-              id: fechaRegistro.id,
-              mes: fechaRegistro.mes,
-              anio: fechaRegistro.anio,
-              porcentaje: fechaRegistro.porcentaje
-            }))
-          })
-        }
-      })
   }
 
   formateaValor(valor) {
