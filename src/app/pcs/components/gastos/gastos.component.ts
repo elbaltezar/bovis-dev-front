@@ -13,6 +13,7 @@ import { Rubro, EtapasPorProyectoData, SumaFecha } from '../../models/pcs.model'
 import { CatalogosService } from '../../services/catalogos.service';
 import { CostosService } from 'src/app/costos/services/costos.service';
 import { Injectable } from '@angular/core';
+import { id } from 'date-fns/locale';
 
 
 
@@ -34,6 +35,8 @@ export class GastosComponent implements OnInit {
   catalogosService = inject(CatalogosService)
   costosService = inject(CostosService)
 
+  rubrosReembolsables: FormArray = this.fb.array([]);
+  rubrosNoReembolsables: FormArray = this.fb.array([]);
 
   cargando: boolean = true
   proyectoSeleccionado: boolean = false
@@ -150,8 +153,7 @@ export class GastosComponent implements OnInit {
 
 
   async cargarInformacion(numProyecto: number) {
-
-    this.pcsService.obtenerGastosIngresosSecciones(numProyecto)
+    await this.pcsService.obtenerGastosIngresosSecciones(numProyecto)
       .pipe(finalize(() => this.cargando = false))
       .subscribe({
         next: async ({ data }) => {
@@ -170,7 +172,6 @@ export class GastosComponent implements OnInit {
             }));
 
             seccion.rubros.forEach((rubro, rubroIndex) => {
-
               // Agregamos los rubros por seccion
               this.rubros(seccionIndex).push(this.fb.group({
                 ...rubro,
@@ -182,10 +183,6 @@ export class GastosComponent implements OnInit {
 
                 // Agreamos las fechas por rubro
                 rubro.fechas.forEach(fecha => {
-                  // rubro.fechas.forEach(fecha => {
-                  //   this.sumacolumna += +fecha.porcentaje
-                  // });
-
                   if (rubro.costoMensual != null) {
                     this.costoMensualEmpleado = rubro.costoMensual;
                   }
@@ -195,88 +192,11 @@ export class GastosComponent implements OnInit {
                     mes: fecha.mes,
                     anio: fecha.anio,
                     porcentaje: this.formateaValor((fecha.porcentaje * this.costoMensualEmpleado) / 100)
-                    //porcentaje: fecha.porcentaje
                   }));
                 });
 
-
-                /**
-                                this.costosService.getCostoID(rubro.numEmpleadoRrHh)
-                                .pipe(finalize(() => this.sharedService.cambiarEstado(false)))
-                                .subscribe({
-                                  next: ({data,message}) => {
-                                    const [costoR] = data
-                                    if(message != null  ){
-                                      this.mensajito = message;
-                                      if(this.mensajito.includes('No se encontraron registros de costos para el empleado') ){
-                                     // console.log('message ' + message)
-                                     // console.log('es 0 ' + 0)
-
-                                      this.costoMensualEmpleado =  0
-                                          // Agreamos las fechas por rubro
-                                          rubro.fechas.forEach(fecha => {
-                                          rubro.fechas.forEach(fecha => {
-                                            this.sumacolumna += +fecha.porcentaje
-                                          })
-                                          this.mesesProyecto        = obtenerMeses(this.proyectoFechaInicio, this.proyectoFechaFin)
-                                         //console.log('const total1 ------< ' + total)
-
-                                          this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
-                                            id:         fecha.id,
-                                            mes:        fecha.mes,
-                                            anio:       fecha.anio,
-                                            porcentaje: (fecha.porcentaje *this.costoMensualEmpleado)/100
-                                            //porcentaje: fecha.porcentaje
-                                          }))
-                                        })
-                                    }else{
-                                      this.costoMensualEmpleado =  data.map(empleado => costoR.costoMensualEmpleado )[0]
-                                        seccion.sumaFechas.forEach((sumaFecha) => {this.sumafechas(seccionIndex).push(this.fb.group({
-                                            mes:        sumaFecha.mes,
-                                            anio:       sumaFecha.anio,
-                                            sumaFecha:  sumaFecha.sumaPorcentaje
-                                          }))
-                                        })
-                                          rubro.fechas.forEach(fecha => {
-                                            this.sumacolumna += +fecha.porcentaje
-                                          })
-
-                                        // Agreamos las fechas por rubro
-                                        rubro.fechas.forEach(fecha => {
-                                          this.fechas(seccionIndex, rubroIndex).push(this.fb.group({
-                                            id:         fecha.id,
-                                            mes:        fecha.mes,
-                                            anio:       fecha.anio,
-                                            porcentaje: (fecha.porcentaje *this.costoMensualEmpleado)/100
-                                            //porcentaje: fecha.porcentaje
-                                          }))
-                                        })
-                                    }
-                                    }
-                                  },
-                                  error: (err) => {
-                                    //console.log("error cuando no Existe registro de costos --------------> " +err.error.text);
-                                    //this.costoMensualEmpleado = 0
-                                    //this.messageService.add({ severity: 'error', summary: TITLES.error, detail: err.error })
-
-                                  }
-
-
-                                })*/
-
+                //this.rubrosReembolsables = this.rubrosNoReembolsables = seccion.rubros;
               } else {
-                // seccion.sumaFechas.forEach((sumaFecha) => {
-                //   this.sumafechas(seccionIndex).push(this.fb.group({
-                //     mes: sumaFecha.mes,
-                //     anio: sumaFecha.anio,
-                //     sumaFecha: sumaFecha.sumaPorcentaje
-                //   }));
-                // });
-
-                // rubro.fechas.forEach(fecha => {
-                //   this.sumacolumna += +fecha.porcentaje
-                // });
-
                 // Agreamos las fechas por rubro
                 this.mesesProyecto.forEach(mes => {
                   const mesRegistro = rubro.fechas.find(r =>
@@ -300,9 +220,59 @@ export class GastosComponent implements OnInit {
                       mes: mes.mes,
                       anio: mes.anio,
                       porcentaje: 0,
+                      reembolsable: rubro.reembolsable,
                     }));
                   }
                 });
+
+                const reembolsablesFormArray = this.fb.array(
+                  seccion.rubros
+                    .filter(rubro => rubro.reembolsable == true)
+                    .map(rubro => this.fb.group({
+                      ...rubro,
+                      idSeccion: seccion.idSeccion,
+                      fechas: this.fb.array(
+                        rubro.fechas.map(fecha => this.fb.group({
+                          id: fecha.id,
+                          mes: fecha.mes,
+                          anio: fecha.anio,
+                          porcentaje: fecha.porcentaje
+                        }))
+                      )
+                    }))
+                );
+                this.rubrosReembolsables.push(reembolsablesFormArray);
+
+                const noReembolsablesFormArray = this.fb.array(
+                  seccion.rubros
+                    .filter(rubro => rubro.reembolsable === false || rubro.reembolsable === null)
+                    .map(rubro => this.fb.group({
+                      ...rubro,
+                      idSeccion: seccion.idSeccion,
+                      fechas: this.fb.array(
+                        rubro.fechas.map(fecha => this.fb.group({
+                          id: fecha.id,
+                          mes: fecha.mes,
+                          anio: fecha.anio,
+                          porcentaje: fecha.porcentaje
+                        }))
+                      )
+                    }))
+                );
+                this.rubrosNoReembolsables.push(noReembolsablesFormArray);
+
+                this.rubros(seccionIndex).clear();
+
+                console.log(this.rubrosReembolsables.value);
+                console.log(this.rubrosNoReembolsables.value);
+
+
+
+
+
+
+
+
 
                 // rubro.fechas.forEach(fecha => {
                 //   const mesRegistro = this.mesesProyecto.find(m =>
@@ -326,8 +296,7 @@ export class GastosComponent implements OnInit {
           }))
         },
         error: (err) => this.messageService.add({ severity: 'error', summary: TITLES.error, detail: err.error })
-      })
-
+      });
 
     this.catalogosService.obtenerParametros()
       .subscribe(params => {
@@ -337,12 +306,31 @@ export class GastosComponent implements OnInit {
           this.idproyecto = params.proyecto
           // console.log("else params.proyecto:" + params.proyecto)
         }
-      })
+      });
+  }
+
+  getRubrosReembolsablesPorSeccion(seccionId: number) {
+    let rubros = this.rubros(seccionId).controls
+      .map(control => control.value)
+      .filter(rubro => rubro.idSeccion === seccionId && rubro.reembolsable === true);
+
+    // console.log(rubros);
+
+    return rubros;
+  }
+
+  getRubrosNoReembolsablesPorSeccion(seccionId: number) {
+    let rubros = this.rubrosNoReembolsables.controls
+      .map(control => control.value)
+      .filter(rubro => rubro.idSeccion === seccionId && rubro.reembolsable === false);
+
+    return rubros;
   }
 
 
 
-  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number, reembolsable: boolean) {
+
+  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number, reembolsable: boolean, idSeccion: number) {
     rubro.reembolsable = reembolsable;
 
     this.dialogService.open(ModificarRubroComponent, {
@@ -354,6 +342,7 @@ export class GastosComponent implements OnInit {
         fechaInicio: this.proyectoFechaInicio,
         fechaFin: this.proyectoFechaFin,
         numProyecto: this.numProyectorubro,
+        idSeccion: idSeccion,
       }
     }).onClose.subscribe((result) => {
       if (result && result.rubro) {

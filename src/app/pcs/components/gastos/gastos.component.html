@@ -33,9 +33,11 @@
                             </div>
                         </ng-template>
                         <ng-template pTemplate="content">
-                            <p-table [value]="rubros(i).controls" [scrollable]="true" scrollHeight="400px">
+                            <!-- <p-table [value]="rubros(i).controls" [scrollable]="true" scrollHeight="400px"> -->
+                            <p-table [value]="rubrosReembolsables.value" [scrollable]="true" scrollHeight="400px">
                                 <ng-template pTemplate="header">
                                     <tr>
+                                        <th>ID</th>
                                         <th width="100px">Opciones</th>
                                         <th>Nombre</th>
                                         <th>Unidad</th>
@@ -51,29 +53,30 @@
                                     <tr>
                                         <td *ngIf="seccion.value.idSeccion == 2; then empleados else elseimporte"></td>
                                         <ng-template #empleados>
+                                            <td>{{rubro[i].id}}</td>
                                             <td>
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro, true)"
-                                                        [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
+                                                        (click)="modificarRubro(rubro, i, iRubro, true, seccion.value.idSeccion)"
+                                                        [disabled]="!rubro[i].idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td>{{rubro.value.rubro}}</td>
-                                            <td  class="text-center">{{rubro.value.unidad}}</td>
-                                            <td class="text-center">{{rubro.value.cantidad}}</td>
+                                            <td>{{rubro[i].rubro}}</td>
+                                            <td class="text-center">{{rubro[i].unidad}}</td>
+                                            <td class="text-center">{{rubro[i].cantidad}}</td>
                                             <td class="text-center">Sí</td>
                                             <td
-                                                *ngIf="!!rubro.value.reembolsable ; then thenrembolsableSi else thenrembolsableNo">
+                                                *ngIf="!!rubro[i].reembolsable ; then thenrembolsableSi else thenrembolsableNo">
                                             </td>
                                             <ng-template #thenrembolsableSi>
-                                                <td  class="text-end">
-                                                    {{rubro.value.fechas | calcularSubtotal}}
+                                                <td class="text-end">
+                                                    {{rubro[i].fechas | calcularSubtotal}}
                                                 </td>
                                                 <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
-                                                    {{rubro.value.fechas | porcentajeMes:mesRegistro}}
+                                                    {{rubro[i].fechas | porcentajeMes:mesRegistro}}
                                                 </td>
                                             </ng-template>
                                             <ng-template #thenrembolsableNo>
@@ -86,29 +89,30 @@
                                             </ng-template>
                                         </ng-template>
                                         <ng-template #elseimporte>
+                                            <td>{{rubro[i].id}}</td>
                                             <td>
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro, true)"
-                                                        [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
+                                                        (click)="modificarRubro(rubro, i, iRubro, true, seccion.value.idSeccion)"
+                                                        [disabled]="!rubro[i].idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td>{{rubro.value.rubro}}</td>
-                                            <td  class="text-center">{{rubro.value.unidad}}</td>
-                                            <td class="text-center">{{rubro.value.cantidad}}</td>
+                                            <td>{{rubro[i].rubro}}</td>
+                                            <td class="text-center">{{rubro[i].unidad}}</td>
+                                            <td class="text-center">{{rubro[i].cantidad}}</td>
                                             <td class="text-center">Sí</td>
                                             <td
-                                                *ngIf="!!rubro.value.reembolsable ; then thenrembolsableSi else thenrembolsableNo">
+                                                *ngIf="!!rubro[i].reembolsable ; then thenrembolsableSi else thenrembolsableNo">
                                             </td>
                                             <ng-template #thenrembolsableSi>
                                                 <td class="text-end">
-                                                    {{rubro.value.fechas | calcularSubtotal}}
+                                                    {{rubro[i].fechas | calcularSubtotal}}
                                                 </td>
                                                 <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
-                                                    {{ (rubro.value.fechas | porcentajeMes:mesRegistro) }}
+                                                    {{ (rubro[i].fechas | porcentajeMes:mesRegistro) }}
                                                 </td>
                                             </ng-template>
                                             <ng-template #thenrembolsableNo>
@@ -130,7 +134,8 @@
                                     <tr>
                                         <td colspan="6" class="text-end">Totales</td>
                                         <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
-                                            {{calcularTotalPorcentajePorMes(seccion.value.seccion, mesRegistro, true) | currency}}
+                                            {{calcularTotalPorcentajePorMes(seccion.value.seccion, mesRegistro, true) |
+                                            currency}}
                                         </td>
                                     </tr>
                                 </ng-template>
@@ -159,9 +164,11 @@
                             </div>
                         </ng-template>
                         <ng-template pTemplate="content">
-                            <p-table [value]="rubros(i).controls" [scrollable]="true" scrollHeight="400px">
+                            <!-- <p-table [value]="rubros(i).controls" [scrollable]="true" scrollHeight="400px"> -->
+                            <p-table [value]="rubrosReembolsables.value" [scrollable]="true" scrollHeight="400px">
                                 <ng-template pTemplate="header">
                                     <tr>
+                                        <th>ID</th>
                                         <th width="100px">Opciones</th>
                                         <th>Nombre</th>
                                         <th>Unidad</th>
@@ -175,32 +182,34 @@
                                 </ng-template>
                                 <ng-template pTemplate="body" let-rubro let-iRubro="rowIndex">
                                     <tr>
+                                        <td>
                                         <td *ngIf="seccion.value.idSeccion == 2; then empleadosNO else elseimporteNO">
                                         </td>
                                         <ng-template #empleadosNO>
+                                            <td>{{rubro[i].id}}</td>
                                             <td>
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro, false)"
-                                                        [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
+                                                        (click)="modificarRubro(rubro, i, iRubro, false, seccion.value.idSeccion)"
+                                                        [disabled]="!rubro[i].idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td>{{rubro.value.rubro}}</td>
-                                            <td  class="text-center">{{rubro.value.unidad}}</td>
-                                            <td class="text-center">{{rubro.value.cantidad}}</td>
+                                            <td>{{rubro[i].rubro}}</td>
+                                            <td class="text-center">{{rubro[i].unidad}}</td>
+                                            <td class="text-center">{{rubro[i].cantidad}}</td>
                                             <td class="text-center">No</td>
                                             <td
-                                                *ngIf="!!rubro.value.reembolsable ; then thenrembolsableNo else thenrembolsableSi">
+                                                *ngIf="!!rubro[i].reembolsable ; then thenrembolsableNo else thenrembolsableSi">
                                             </td>
                                             <ng-template #thenrembolsableSi>
-                                                <td  class="text-end">
-                                                    {{rubro.value.fechas | calcularSubtotal}}
+                                                <td class="text-end">
+                                                    {{rubro[i].fechas | calcularSubtotal}}
                                                 </td>
-                                                <td *ngFor="let mesRegistro of mesesProyecto"  class="text-end">
-                                                    {{rubro.value.fechas | porcentajeMes:mesRegistro}}
+                                                <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
+                                                    {{rubro[i].fechas | porcentajeMes:mesRegistro}}
                                                 </td>
                                             </ng-template>
                                             <ng-template #thenrembolsableNo>
@@ -213,29 +222,30 @@
                                             </ng-template>
                                         </ng-template>
                                         <ng-template #elseimporteNO>
+                                            <td>{{rubro[i].id}}</td>
                                             <td>
                                                 <div class="d-flex gap-2 justify-content-center">
                                                     <button title="Modificar rubro" type="button"
                                                         class="btn btn-primary"
-                                                        (click)="modificarRubro(rubro.value, i, iRubro, false)"
-                                                        [disabled]="!rubro.value.idRubro || seccion.value.idSeccion == 2 ">
+                                                        (click)="modificarRubro(rubro, i, iRubro, false, seccion.value.idSeccion)"
+                                                        [disabled]="!rubro[i].idRubro || seccion.value.idSeccion == 2 ">
                                                         <i class="pi pi-pencil vertical-align-middle"></i>
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td>{{rubro.value.rubro}}</td>
-                                            <td  class="text-center">{{rubro.value.unidad}}</td>
-                                            <td class="text-center">{{rubro.value.cantidad}}</td>
+                                            <td>{{rubro[i].rubro}}</td>
+                                            <td class="text-center">{{rubro[i].unidad}}</td>
+                                            <td class="text-center">{{rubro[i].cantidad}}</td>
                                             <td class="text-center">No</td>
                                             <td
-                                                *ngIf="!!rubro.value.reembolsable ; then thenrembolsableNo  else thenrembolsableSi">
+                                                *ngIf="!!rubro[i].reembolsable ; then thenrembolsableNo  else thenrembolsableSi">
                                             </td>
                                             <ng-template #thenrembolsableSi>
                                                 <td class="text-end">
-                                                    {{rubro.value.fechas | calcularSubtotal}}
+                                                    {{rubro[i].fechas | calcularSubtotal}}
                                                 </td>
                                                 <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
-                                                    {{rubro.value.fechas | porcentajeMes:mesRegistro}}
+                                                    {{rubro[i].fechas | porcentajeMes:mesRegistro}}
                                             </ng-template>
                                             <ng-template #thenrembolsableNo>
                                                 <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
@@ -254,7 +264,8 @@
                                     <tr>
                                         <td colspan="6" class="text-end">Totales</td>
                                         <td *ngFor="let mesRegistro of mesesProyecto" class="text-end">
-                                            {{calcularTotalPorcentajePorMes(seccion.value.seccion, mesRegistro, false) | currency}}
+                                            {{calcularTotalPorcentajePorMes(seccion.value.seccion, mesRegistro, false) |
+                                            currency}}
                                         </td>
                                     </tr>
                                 </ng-template>

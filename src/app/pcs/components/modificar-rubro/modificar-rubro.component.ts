@@ -29,11 +29,11 @@ export class ModificarRubroComponent implements OnInit {
   sharedService = inject(SharedService)
   pcsService = inject(PcsService)
   fb = inject(FormBuilder)
-
   unidades: Unid[] | undefined;
 
   selectedUnidades: Unid | undefined;
 
+  idSeccion: Number;
   selectedUnidad: any;
 
   mes_ini: number
@@ -46,7 +46,8 @@ export class ModificarRubroComponent implements OnInit {
     reembolsable: [false],
     aplicaTodosMeses: [false],
     fechas: this.fb.array([]),
-    numProyecto: [null]
+    numProyecto: [null],
+    idSeccion: [null],
   })
 
   constructor() { }
@@ -67,6 +68,7 @@ export class ModificarRubroComponent implements OnInit {
     console.log(rubro);
 
     const numProyectos = this.config.data.numProyecto
+    this.idSeccion = this.config.data.idSeccion;
 
     if (this.config.data) {
       //console.log('valor de unidad ' + rubro.unidad )
@@ -76,7 +78,8 @@ export class ModificarRubroComponent implements OnInit {
         cantidad: rubro.cantidad?.toString(),
         reembolsable: rubro.reembolsable || false,
         aplicaTodosMeses: rubro.aplicaTodosMeses || false,
-        numProyecto: numProyectos
+        numProyecto: numProyectos,
+        idSeccion: this.config.data.idSeccion,
       })
     }
 

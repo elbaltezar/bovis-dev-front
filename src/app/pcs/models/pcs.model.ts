@@ -136,6 +136,7 @@ export interface GastosIngresosTotales {
 }
 
 export interface Rubro {
+    id:               number;
     idRubro:          number;
     rubro:            string;
     unidad:           string;
