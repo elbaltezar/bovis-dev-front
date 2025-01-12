@@ -15,8 +15,8 @@ export class PorcentajeMesPipe implements PipeTransform {
     if (fecha && fecha.porcentaje > 0) {
       return this.formateaValor(formatCurrency(fecha.porcentaje, 'en-US', getCurrencySymbol('USD', 'wide')))
 
-      const porcentaje = Number(fecha.porcentaje);
-      return isNaN(porcentaje) ? 0 : porcentaje;
+      // const porcentaje = Number(fecha.porcentaje);
+      // return isNaN(porcentaje) ? 0 : porcentaje;
     }
 
     return this.formateaValor(formatCurrency(0, 'en-US', getCurrencySymbol('USD', 'wide')))
