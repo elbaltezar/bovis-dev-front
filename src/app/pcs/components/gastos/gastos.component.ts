@@ -341,7 +341,7 @@ export class GastosComponent implements OnInit {
 
 
 
-  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number, reembolsable: boolean) {
+  modificarRubro(rubro: Rubro, seccionIndex: number, rubroIndex: number, idSeccion: number, reembolsable: boolean) {
     rubro.reembolsable = reembolsable;
 
     this.dialogService.open(ModificarRubroComponent, {
@@ -350,6 +350,7 @@ export class GastosComponent implements OnInit {
       contentStyle: { overflow: 'auto' },
       data: {
         rubro,
+        idSeccion,
         fechaInicio: this.proyectoFechaInicio,
         fechaFin: this.proyectoFechaFin,
         numProyecto: this.numProyectorubro,

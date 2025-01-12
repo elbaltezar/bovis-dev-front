@@ -21,7 +21,6 @@ interface Unid {
   providers: [MessageService]
 })
 export class ModificarRubroComponent implements OnInit {
-
   ref = inject(DynamicDialogRef)
   config = inject(DynamicDialogConfig)
   primeConfig = inject(PrimeNGConfig)
@@ -41,6 +40,7 @@ export class ModificarRubroComponent implements OnInit {
 
   form = this.fb.group({
     idRubro: [null],
+    idSeccion: [null],
     unidad: ['', Validators.required],
     cantidad: ['', Validators.required],
     reembolsable: [false],
@@ -64,15 +64,17 @@ export class ModificarRubroComponent implements OnInit {
     ];
 
     const rubro = this.config.data.rubro as Rubro
-    console.log(rubro);
+    // console.log(rubro);
 
-    const numProyectos = this.config.data.numProyecto
+    const idSeccion = this.config.data.idSeccion;
+    const numProyectos = this.config.data.numProyecto;
 
     if (this.config.data) {
       //console.log('valor de unidad ' + rubro.unidad )
       this.form.patchValue({
         idRubro: rubro.idRubro,
         //unidad:           rubro.unidad?.toString(),
+        idSeccion: idSeccion,
         cantidad: rubro.cantidad?.toString(),
         reembolsable: rubro.reembolsable || false,
         aplicaTodosMeses: rubro.aplicaTodosMeses || false,
@@ -144,7 +146,7 @@ export class ModificarRubroComponent implements OnInit {
   }
 
   obtenerPorcentaje(fechas: Fecha[], mesRegistro: Mes) {
-    const mes = fechas.find(info => info.mes == mesRegistro.mes)
+    const mes = fechas.find(info => info.mes == mesRegistro.mes && info.anio == mesRegistro.anio)
 
     if (mes && mes.porcentaje > 0) {
       return +mes.porcentaje

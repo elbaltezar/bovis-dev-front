@@ -9,17 +9,13 @@ import { formatCurrency, getCurrencySymbol } from '@angular/common';
 export class PorcentajeMesPipe implements PipeTransform {
 
   transform(value: Fecha[], ...args: unknown[]): unknown {
-    const [mesRegistro] = args as Array<Mes>
-    const mes = value.find(info => info.mes == mesRegistro.mes)
-    const anio = value.find(info => info.anio == mesRegistro.anio)
-    // console.log(' mes ------>> ' + mes.mes)
-    // console.log(' anio ------>> ' + anio.anio)
+    const [mesRegistro] = args as Array<Mes>;
+    const fecha = value.find(fecha => fecha.mes == mesRegistro.mes && fecha.anio == mesRegistro.anio);
 
-    if (mes && anio && mes.porcentaje > 0) {
-      //console.log(' mes.porcentaje ------>> ' + mes.porcentaje)
-      return this.formateaValor(formatCurrency(mes.porcentaje, 'en-US', getCurrencySymbol('USD', 'wide')))
+    if (fecha && fecha.porcentaje > 0) {
+      return this.formateaValor(formatCurrency(fecha.porcentaje, 'en-US', getCurrencySymbol('USD', 'wide')))
 
-      const porcentaje = Number(mes.porcentaje);
+      const porcentaje = Number(fecha.porcentaje);
       return isNaN(porcentaje) ? 0 : porcentaje;
     }
 
